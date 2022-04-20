@@ -19,17 +19,22 @@ var App = {
     App.startSpinner();
     App.fetch(App.stopSpinner);
 
-    // TODO: Make sure the app loads data from the API
-    // continually, instead of just once at the start.
+
+    // Poll for new messages every 3 sec
+    setInterval(App.fetch, 3000);
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
-      // examine the response from the server request:
-      console.log(data);
 
-      // TODO: Use the data to update Messages and Rooms
-      // and re-render the corresponding views.
+      // Only update if we have messages.
+      if (data && data.length) {
+        Rooms.update(data, RoomsView.render);
+        Messages.update(data, MessagesView.render);
+
+        callback();
+      }
+      return;
     });
   },
 
