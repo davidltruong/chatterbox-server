@@ -33,53 +33,47 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  var statusCode = 404;
+  // var keysRequest = Object.keys(request);
+  // console.log(keysRequest);
+  console.log(request._postData); // this is where the message is located
 
-  //console.log(request.METHODS);
+  // var keys = Object.keys(response);
+  // console.log(keys);
+  console.log(response._data); //this is where we should put our messages
+
+
+
+  var statusCode = 404;
+  var headers = defaultCorsHeaders;
+  var end = {
+    results: [{
+      username: 'Jono',
+      text: 'Do my bidding!'}]
+  };
+
+  console.log('Serving request type ' + request.method + ' for url ' + request.url);
+
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
       statusCode = 200;
-
-      // console.log(request._readableState);
-      // console.log(request._events);
-      // console.log(request._eventCount);
-      // console.log(request._maxListeners);
-      // console.log(request.socket);
-      // console.log(request.httpVersionMajor);
-      // console.log('httpVersionMinor', request.httpVersionMinor);
-      // console.log('httpVersion', request.httpVersion);
-      // console.log(request.complete);
-      // console.log( request.rawHeaders);
-      // console.log('rawTrailers', request.rawTrailers);
-      // console.log('aborted', request.aborted);
-      // console.log('upgrade', request.upgrade);
-      // console.log('url', request.url);
-      // console.log('method', request.method);
-      // console.log('statusCode', request.statusCode);
-      // // console.log('statusMessage' + request.statusMessage);
-      // console.log(request.client);
-      // console.log('_consuming' + request._consuming);
-      console.log('_dumped' + request._dumped);
-
-      console.log('Serving request type ' + request.method + ' for url ' + request.url);
     } else if (request.method === 'POST') {
       statusCode = 201;
 
+    } else if (request.method === 'OPTIONS') {
+      statusCode = 200;
     }
   }
 
-  //console.log(request);
-  // console.log(response);
 
   // The outgoing status.
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
+
   headers['Content-Type'] = 'application/JSON';
 
   // .writeHead() writes to the request line and headers of the response,
@@ -94,7 +88,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(JSON.stringify(end));
 
 };
 
@@ -110,4 +104,6 @@ var requestHandler = function(request, response) {
 
 
 
+
 module.exports = requestHandler;
+module.exports.requestHandler = requestHandler;
