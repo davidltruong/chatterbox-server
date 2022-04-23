@@ -18,20 +18,19 @@ var App = {
     // Fetch initial batch of messages
     App.startSpinner();
     App.fetch(App.stopSpinner);
+    App.stopSpinner();
 
 
     // Poll for new messages every 3 sec
-    setInterval(App.fetch, 3000);
+    setInterval(App.fetch, 1000000);
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
-
       // Only update if we have messages.
-      if (data && data.length) {
-        Rooms.update(data, RoomsView.render);
-        Messages.update(data, MessagesView.render);
-
+      if (data.results && data.results.length) {
+        Rooms.update(data.results, RoomsView.render);
+        Messages.update(data.results, MessagesView.render);
         callback();
       }
       return;

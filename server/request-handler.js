@@ -1,3 +1,5 @@
+var http = require('http');
+
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -18,6 +20,8 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var messageObj = { 'results': []};
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -33,37 +37,64 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+
   // var keysRequest = Object.keys(request);
   // console.log(keysRequest);
-  console.log(request._postData); // this is where the message is located
+
+  //console.log(request._postData); // this is where the message is located
 
   // var keys = Object.keys(response);
   // console.log(keys);
-  console.log(response._data); //this is where we should put our messages
 
+  //console.log(response._data); //this is where we should put our messages
 
 
   var statusCode = 404;
   var headers = defaultCorsHeaders;
-  var end = {
-    results: [{
-      username: 'Jono',
-      text: 'Do my bidding!'}]
-  };
 
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  // {
+  //   results: [{
+  //     username: 'Jono',
+  //     text: 'Do my bidding!'}]
+  // };
+
+  //console.log('Serving request type ' + request.method + ' for url ' + request.url);
+
 
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
       statusCode = 200;
+      headers['Content-Type'] = 'application/JSON';
+      response.writeHead(statusCode, headers);
+      //console.log(messageObj);
+      response.end(JSON.stringify(messageObj));
     } else if (request.method === 'POST') {
       statusCode = 201;
+      var body = '';
+      request.on('data', function (chunk) {
+        body += chunk;
+      });
 
+      request.on('end', function () {
+        messageObj.results.push(JSON.parse(body));
+        headers['Content-Type'] = 'application/JSON';
+        response.writeHead(statusCode, headers);
+        response.end(JSON.stringify(messageObj));
+      });
+      // var message = request._postData;
+      // response._data.results.push(message);
+      //console.log(response._data);
     } else if (request.method === 'OPTIONS') {
       statusCode = 200;
+      headers['Content-Type'] = 'application/JSON';
+      response.writeHead(statusCode, headers);
+      response.end();
     }
+  } else {
+    headers['Content-Type'] = 'application/JSON';
+    response.writeHead(statusCode, headers);
+    response.end();
   }
-
 
   // The outgoing status.
 
@@ -74,11 +105,11 @@ var requestHandler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
 
-  headers['Content-Type'] = 'application/JSON';
+  //headers['Content-Type'] = 'application/JSON';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  //response.writeHead(statusCode, headers);
 
 
   // Make sure to always call response.end() - Node may not send
@@ -88,7 +119,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify(end));
+  //response.end(JSON.stringify(messageObj));
 
 };
 
