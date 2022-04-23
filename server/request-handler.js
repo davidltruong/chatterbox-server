@@ -76,7 +76,10 @@ var requestHandler = function(request, response) {
       });
 
       request.on('end', function () {
-        messageObj.results.push(JSON.parse(body));
+        body = JSON.parse(body);
+        var length = Object.keys(messageObj.results).length;
+        body['message_id'] = length + 1;
+        messageObj.results.unshift(body);
         headers['Content-Type'] = 'application/JSON';
         response.writeHead(statusCode, headers);
         response.end(JSON.stringify(messageObj));
@@ -85,7 +88,7 @@ var requestHandler = function(request, response) {
       // response._data.results.push(message);
       //console.log(response._data);
     } else if (request.method === 'OPTIONS') {
-      statusCode = 200;
+      statusCode = 204;
       headers['Content-Type'] = 'application/JSON';
       response.writeHead(statusCode, headers);
       response.end();

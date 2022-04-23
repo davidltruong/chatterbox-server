@@ -18,7 +18,7 @@ var Messages = {
 
   update: function(messages, callback = ()=>{}) {
     var length = Object.keys(Messages._data).length;
-
+    console.log('message', messages);
     for (let message of messages) {
       Messages._data[message.message_id] = Messages._conform(message);
     }

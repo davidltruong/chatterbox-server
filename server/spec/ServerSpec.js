@@ -103,4 +103,50 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
+  it('Test 1 Should 404 when going to david page', function() {
+    var req = new stubs.request('/david', 'GET');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(404);
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Test 2 Should make a new message and find it as the first message in the array', function() {
+    var stubMsg = {
+      username: 'David',
+      text: 'Hello World!'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(201);
+
+    // Now if we request the log for that room the message we posted should be there:
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    var messages = JSON.parse(res._data).results;
+    expect(messages.length).to.be.above(0);
+    expect(messages[0].username).to.equal('David');
+    expect(messages[0].text).to.equal('Hello World!');
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Test 3 Should 204 when doing an Options request', function() {
+    var req = new stubs.request('/classes/messages', 'OPTIONS');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(204);
+    expect(res._ended).to.equal(true);
+  });
+
 });
