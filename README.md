@@ -22,7 +22,7 @@ This project uses [node](http://nodejs.org) and [npm](https://npmjs.com).
 
 ## Usage
 
-This project is to showcase use of an express server to handle requests from an existing front end app, Chatterbox client.
+This project is to showcase use of an express server to handle requests from an existing front end app, Chatterbox client to the legacy third party API database.
 
 ## Maintainers
 
